@@ -1,0 +1,49 @@
+{
+  "version": "0.2.0",
+  "compounds": [
+    {
+      "name": "Launch Frontend & Backend",
+      "configurations": [
+        "Python: Flask",
+        "npm: start"
+      ],
+      "stopAll": true
+    }
+  ],
+  "configurations": [
+    {
+      "name": "Python: Flask",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "flask",
+      "env": {
+        "FLASK_APP": "src/ui_server.py",
+        "FLASK_ENV": "development",
+        "FLASK_DEBUG": "1",
+        "PORT": "9090"
+      },
+      "args": [
+        "run",
+        "--no-debugger",
+        "--port",
+        "9090"
+      ],
+      "jinja": true,
+      "justMyCode": true
+    },
+    {
+      "name": "npm: start",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/ui",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "start"
+      ],
+      "env": {
+        "BROWSER": "none",
+        "PORT": "3000"
+      }
+    }
+  ]
+}

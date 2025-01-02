@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend.Dockerfile
+    ports:
+      - "9090:9090"
+    env_file:
+      - .env_compose
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - SERPER_API_KEY
+      - YOUTUBE_API_KEY
+      - AWS_DEFAULT_REGION
+      - CANVAS_MODEL
+      - ANTHROPIC_MODEL
+      - NOVA_MODEL
+
+  frontend:
+    build:
+      context: ./ui
+      dockerfile: frontend.Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:9090
+      - WDS_SOCKET_PORT=0
+    depends_on:
+      - backend 
