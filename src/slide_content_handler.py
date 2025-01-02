@@ -58,9 +58,7 @@ class SlideContentHandler:
             self._add_cover_slide(slide, slide_data, presentation, prs)
         else:
             self._add_content_slide(slide, slide_data, presentation)
-            self._add_footer(
-                slide, presentation
-            )
+            self._add_footer(slide, presentation)
 
     def _add_cover_slide(self, slide, slide_data, presentation, prs):
         logging.info("Adding cover slide")
@@ -205,8 +203,8 @@ class SlideContentHandler:
             presentation.theme.colors.title.b,
         )
 
-        # Add content below title with reduced spacing and footer buffer
-        content_left = Inches(1)
+        # Add content below title with reduced spacing
+        content_left = self.MARGIN  # Changed from Inches(1) to align with title
         if slide_data.style == "bullets":
             self._add_bullet_content(
                 slide, slide_data, presentation, left_section_width, content_left
@@ -285,28 +283,29 @@ class SlideContentHandler:
     ):
         logging.info("Adding bullet content")
 
-        # Calculate footer space
-
         content_box = slide.shapes.add_textbox(
             content_left,
-            self.CONTENT_TOP,
+            self.CONTENT_TOP - Inches(0.3),  # Reduced space between title and content
             section_width - (self.MARGIN * 2),
             self.SLIDE_HEIGHT - self.CONTENT_TOP - self.FOOTER_HEIGHT,
         )
         text_frame = content_box.text_frame
         text_frame.word_wrap = True
 
-        for item in slide_data.content:
+        # Remove any empty strings at the start of content
+        content = [item for item in slide_data.content if str(item).strip()]
+
+        for item in content:
             p = text_frame.add_paragraph()
             p.level = item.level if hasattr(item, "level") else 0
 
-            # Set bullet properties directly
+            # Reduced spacing between bullet points
             if p.level == 0:
-                p.space_before = Pt(12)
-                p.space_after = Pt(6)
+                p.space_before = Pt(6)  # Reduced from 12
+                p.space_after = Pt(3)  # Reduced from 6
             else:
-                p.space_before = Pt(6)
-                p.space_after = Pt(6)
+                p.space_before = Pt(3)  # Reduced from 6
+                p.space_after = Pt(3)  # Reduced from 6
 
             text = item.text if hasattr(item, "text") else str(item)
 
@@ -387,7 +386,8 @@ class SlideContentHandler:
         text_frame.word_wrap = True
 
         p = text_frame.add_paragraph()
-        p.text = str(slide_data.content)
+        # Remove any leading/trailing whitespace from content
+        p.text = str(slide_data.content).strip()
         p.font.size = self.STANDARD_TEXT_SIZE
         p.font.name = presentation.theme.fonts.text.name
 

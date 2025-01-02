@@ -20,3 +20,4 @@ __pycache__
 node_modules/
 output/
 uploads/
+presentation-config.json
